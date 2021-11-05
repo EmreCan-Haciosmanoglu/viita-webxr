@@ -65,16 +65,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let scene = new Scene();
     scene.enableStats(false);
 
+    let box_parent = new Node();
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
-    box.visible = false;
-    scene.addNode(box);
+    let box_lid = new Gltf2Node({ url: 'media/gltf/box/box_lid.gltf' });
+    box_parent.addNode(box);
+    box_parent.addNode(box_lid);
+    box_parent.visible = false;
+    scene.addNode(box_parent);
+
 
 
     // Having a really simple drop shadow underneath an object helps ground
     // it in the world without adding much complexity.
     let shadow = new DropShadowNode();
     vec3.set(shadow.scale, 0.15, 0.15, 0.15);
-    //arObjectBox.addNode(shadow);
+    box_parent.addNode(shadow);
 
     const MAX_FLOWERS = 30;
     let flowers = [];
@@ -152,20 +157,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       xrButton.setSession(null);
     }
 
-    // Adds a new object to the scene at the
-    // specified transform.
-    function addARObjectAt(matrix) {
-      let newObject = box_bool ? arObjectBox.clone():arObjectFlower.clone();
-      newObject.visible = true;
-      newObject.matrix = matrix;
-      scene.addNode(newObject);
-      box_bool = !box_bool;
-    }
-
     let rayOrigin = vec3.create();
     let rayDirection = vec3.create();
     function onSelect(event) {
-      if(stage_1 && box.visible)
+      if(stage_1 && box_parent.visible)
       {
         stage_1 = false;
       }
@@ -178,15 +173,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let pose = frame.getViewerPose(xrRefSpace);
       if(stage_1)
       {
-        box.visible = false;
+        box_parent.visible = false;
         // If we have a hit test source, get its results for the frame
         // and use the pose to display a reticle in the scene.
         if (xrHitTestSource && pose) {
           let hitTestResults = frame.getHitTestResults(xrHitTestSource);
           if (hitTestResults.length > 0) {
             let pose = hitTestResults[0].getPose(xrRefSpace);
-            box.visible = true;
-            box.matrix = pose.transform.matrix;
+            box_parent.visible = true;
+            box_parent.matrix = pose.transform.matrix;
           }
         }
       }
