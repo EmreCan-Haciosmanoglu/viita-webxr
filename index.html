@@ -65,30 +65,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let scene = new Scene();
     scene.enableStats(false);
 
-    let arObjectFlower = new Node();
-    arObjectFlower.visible = false;
-    scene.addNode(arObjectFlower);
-
-    let arObjectBox = new Node();
-    arObjectBox.visible = false;
-    scene.addNode(arObjectBox);
-
-    let flower = new Gltf2Node({ url: 'media/gltf/sunflower/sunflower.gltf' });
-    arObjectFlower.addNode(flower);
-
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
-    arObjectBox.addNode(box);
-    var box_bool = false;
+    box.visible = false;
+    scene.addNode(box);
 
-    let reticle = new Gltf2Node({ url: 'media/gltf/reticle/reticle.gltf' });
-    reticle.visible = false;
-    scene.addNode(reticle);
 
     // Having a really simple drop shadow underneath an object helps ground
     // it in the world without adding much complexity.
     let shadow = new DropShadowNode();
     vec3.set(shadow.scale, 0.15, 0.15, 0.15);
-    arObjectFlower.addNode(shadow);
     arObjectBox.addNode(shadow);
 
     const MAX_FLOWERS = 30;
@@ -180,32 +165,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let rayOrigin = vec3.create();
     let rayDirection = vec3.create();
     function onSelect(event) {
-      if (reticle.visible) {
-        // The reticle should already be positioned at the latest hit point, 
-        // so we can just use it's matrix to save an unnecessary call to 
-        // event.frame.getHitTestResults.
-        addARObjectAt(reticle.matrix);
+      if(stage_1 && box.visible)
+      {
+        stage_1 = false;
       }
     }
 
+    var stage_1 = true;
     // Called every time a XRSession requests that a new frame be drawn.
     function onXRFrame(t, frame) {
       let session = frame.session;
       let pose = frame.getViewerPose(xrRefSpace);
-
-      reticle.visible = false;
-
-      // If we have a hit test source, get its results for the frame
-      // and use the pose to display a reticle in the scene.
-      if (xrHitTestSource && pose) {
-        let hitTestResults = frame.getHitTestResults(xrHitTestSource);
-        if (hitTestResults.length > 0) {
-          let pose = hitTestResults[0].getPose(xrRefSpace);
-          reticle.visible = true;
-          reticle.matrix = pose.transform.matrix;
+      if(stage_1)
+      {
+        box.visible = false;
+        // If we have a hit test source, get its results for the frame
+        // and use the pose to display a reticle in the scene.
+        if (xrHitTestSource && pose) {
+          let hitTestResults = frame.getHitTestResults(xrHitTestSource);
+          if (hitTestResults.length > 0) {
+            let pose = hitTestResults[0].getPose(xrRefSpace);
+            box.visible = true;
+            box.matrix = pose.transform.matrix;
+          }
         }
       }
-
+        
       scene.startFrame();
 
       session.requestAnimationFrame(onXRFrame);
