@@ -50,7 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     import { Node } from './js/render/core/node.js';
     import { Gltf2Node } from './js/render/nodes/gltf2.js';
     import { DropShadowNode } from './js/render/nodes/drop-shadow.js';
-    import { vec3 } from './js/render/math/gl-matrix.js';
+    import { glMatrix, mat4, vec3 } from './js/render/math/gl-matrix.js';
     import { Ray } from './js/render/math/ray.js';
 
     // XR globals.
@@ -73,6 +73,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.visible = false;
     scene.addNode(box_parent);
 
+    let reticle = new Gltf2Node({ url: 'media/gltf/reticle/reticle.gltf' });
+    reticle.visible = false;
+    scene.addNode(reticle);
 
 
     // Having a really simple drop shadow underneath an object helps ground
@@ -106,15 +109,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     function onRequestSession() {
-      return navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['local', 'hit-test'] })
+      return navigator.xr.requestSession('immersive-ar',
+        {
+          requiredFeatures: ['local', 'hit-test', 'dom-overlay'],
+          domOverlay: { root: document.body }
+        })
         .then((session) => {
           xrButton.setSession(session);
           onSessionStarted(session);
         });
     }
-
     function onSessionStarted(session) {
-      session.addEventListener('end', onSessionEnded);
+      session.addEventListener('end', (event) => { xrButton.setSession(null); });
       session.addEventListener('select', onSelect);
 
       if (!gl) {
@@ -128,7 +134,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
 
       session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) });
-
       // In this sample we want to cast a ray straight out from the viewer's
       // position and render a reticle where it intersects with a real world
       // surface. To do this we first get the viewer space, then create a
@@ -153,48 +158,92 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       session.end();
     }
 
-    function onSessionEnded(event) {
-      xrButton.setSession(null);
-    }
+    var stage_1 = true;
+    var stage_2 = false;
 
-    let rayOrigin = vec3.create();
-    let rayDirection = vec3.create();
     function onSelect(event) {
-      if(stage_1 && box_parent.visible)
-      {
-        stage_1 = false;
+      if (stage_1) {
+        if (box_parent.visible) {
+          stage_1 = false;
+          stage_2 = true;
+        }
+      }
+      else if (stage_2) {
+        let colided = checkCollision();
+        if (colided) {
+          var m = box_lid.matrix;
+          box_lid.matrix = mat4.rotate(m, box_lid.matrix, glMatrix.toRadian(90), [1, 0, 0]);
+          stage_2 = false;
+        }
       }
     }
 
-    var stage_1 = true;
+
+    var viewerPose;
+    function checkCollision() {
+      if (viewerPose) {
+        let min = [
+          box_lid.min[0] + box_parent.position.x,
+          box_lid.min[1] + box_parent.position.y,
+          box_lid.min[2] + box_parent.position.z
+        ];
+        let max = [
+          box_lid.max[0] + box_parent.position.x,
+          box_lid.max[1] + box_parent.position.y,
+          box_lid.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        //let colided = check_ray_box_intersection(viewerPose.transform.position, direction, min, max, __, box_parent.position);
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+
+
     // Called every time a XRSession requests that a new frame be drawn.
     function onXRFrame(t, frame) {
       let session = frame.session;
-      let pose = frame.getViewerPose(xrRefSpace);
-      if(stage_1)
-      {
+      viewerPose = frame.getViewerPose(xrRefSpace);
+      // If we have a hit test source, get its results for the frame
+      // and use the pose to display a reticle in the scene.
+      if (stage_1) {
         box_parent.visible = false;
-        // If we have a hit test source, get its results for the frame
-        // and use the pose to display a reticle in the scene.
-        if (xrHitTestSource && pose) {
-          let hitTestResults = frame.getHitTestResults(xrHitTestSource);
-          if (hitTestResults.length > 0) {
-            let pose = hitTestResults[0].getPose(xrRefSpace);
+        if (xrHitTestSource && viewerPose) {
+          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
+          if (xrHitTestResults.length > 0) {
+            let pose = xrHitTestResults[0].getPose(xrRefSpace);
             box_parent.visible = true;
             box_parent.matrix = pose.transform.matrix;
+            //box_parent.translation = pose.transform.position;
+            box_parent.position = pose.transform.position;
+            //box_lid.position = pose.transform.position;
           }
         }
       }
-        
+      else {
+        reticle.visible = false;
+        if (xrHitTestSource && viewerPose) {
+          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
+          if (xrHitTestResults.length > 0) {
+            let pose = xrHitTestResults[0].getPose(xrRefSpace);
+            reticle.visible = true;
+            reticle.matrix = pose.transform.matrix;
+          }
+        }
+      }
+
       scene.startFrame();
-
       session.requestAnimationFrame(onXRFrame);
-
-      scene.drawXRFrame(frame, pose);
-
+      scene.drawXRFrame(frame, viewerPose);
       scene.endFrame();
     }
-
     // Start the XR application.
     initXR();
   </script>

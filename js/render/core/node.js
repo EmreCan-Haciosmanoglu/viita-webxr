@@ -413,6 +413,7 @@ export class Node {
 
   onSelect(value) {
     this._selectHandler = value;
+    alert("Work already")
   }
 
   get selectHandler() {

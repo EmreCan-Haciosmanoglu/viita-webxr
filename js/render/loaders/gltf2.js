@@ -18,10 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import {PbrMaterial} from '../materials/pbr.js';
-import {Node} from '../core/node.js';
-import {Primitive, PrimitiveAttribute} from '../core/primitive.js';
-import {ImageTexture, ColorTexture} from '../core/texture.js';
+import { PbrMaterial } from '../materials/pbr.js';
+import { Node } from '../core/node.js';
+import { Primitive, PrimitiveAttribute } from '../core/primitive.js';
+import { ImageTexture, ColorTexture } from '../core/texture.js';
 
 const GL = WebGLRenderingContext; // For enums
 
@@ -32,7 +32,7 @@ const CHUNK_TYPE = {
 };
 
 function isAbsoluteUri(uri) {
-  let absRegEx = new RegExp('^'+window.location.protocol, 'i');
+  let absRegEx = new RegExp('^' + window.location.protocol, 'i');
   return !!uri.match(absRegEx);
 }
 
@@ -43,7 +43,7 @@ function isDataUri(uri) {
 
 function resolveUri(uri, baseUrl) {
   if (isAbsoluteUri(uri) || isDataUri(uri)) {
-      return uri;
+    return uri;
   }
   return baseUrl + uri;
 }
@@ -71,22 +71,22 @@ export class Gltf2Loader {
 
   loadFromUrl(url) {
     return fetch(url)
-        .then((response) => {
-          let i = url.lastIndexOf('/');
-          let baseUrl = (i !== 0) ? url.substring(0, i + 1) : '';
+      .then((response) => {
+        let i = url.lastIndexOf('/');
+        let baseUrl = (i !== 0) ? url.substring(0, i + 1) : '';
 
-          if (url.endsWith('.gltf')) {
-            return response.json().then((json) => {
-              return this.loadFromJson(json, baseUrl);
-            });
-          } else if (url.endsWith('.glb')) {
-            return response.arrayBuffer().then((arrayBuffer) => {
-              return this.loadFromBinary(arrayBuffer, baseUrl);
-            });
-          } else {
-            throw new Error('Unrecognized file extension');
-          }
-        });
+        if (url.endsWith('.gltf')) {
+          return response.json().then((json) => {
+            return this.loadFromJson(json, baseUrl);
+          });
+        } else if (url.endsWith('.glb')) {
+          return response.arrayBuffer().then((arrayBuffer) => {
+            return this.loadFromBinary(arrayBuffer, baseUrl);
+          });
+        } else {
+          throw new Error('Unrecognized file extension');
+        }
+      });
   }
 
   loadFromBinary(arrayBuffer, baseUrl) {
@@ -192,7 +192,7 @@ export class Gltf2Loader {
         glMaterial.normal.texture = getTexture(material.normalTexture);
         glMaterial.occlusion.texture = getTexture(material.occlusionTexture);
         glMaterial.occlusionStrength.value = (material.occlusionTexture && material.occlusionTexture.strength) ?
-                                              material.occlusionTexture.strength : 1.0;
+          material.occlusionTexture.strength : 1.0;
         glMaterial.emissiveFactor.value = material.emissiveFactor || [0, 0, 0];
         glMaterial.emissive.texture = getTexture(material.emissiveTexture);
         if (!glMaterial.emissive.texture && material.emissiveFactor) {
@@ -222,10 +222,14 @@ export class Gltf2Loader {
     let accessors = json.accessors;
 
     let meshes = [];
+    let mesh_name;
+    let min = null;
+    let max = null;
+
     for (let mesh of json.meshes) {
       let glMesh = new Gltf2Mesh();
       meshes.push(glMesh);
-
+      mesh_name = mesh.name;
       for (let primitive of mesh.primitives) {
         let material = null;
         if ('material' in primitive) {
@@ -240,8 +244,6 @@ export class Gltf2Loader {
         /* let glPrimitive = new Gltf2Primitive(primitive, material);
         glMesh.primitives.push(glPrimitive); */
 
-        let min = null;
-        let max = null;
 
         for (let name in primitive.attributes) {
           let accessor = accessors[primitive.attributes[name]];
@@ -289,7 +291,7 @@ export class Gltf2Loader {
         // After all the attributes have been processed, get a program that is
         // appropriate for both the material and the primitive attributes.
         glMesh.primitives.push(
-            this.renderer.createRenderPrimitive(glPrimitive, material));
+          this.renderer.createRenderPrimitive(glPrimitive, material));
       }
     }
 
@@ -298,10 +300,10 @@ export class Gltf2Loader {
     for (let nodeId of scene.nodes) {
       let node = json.nodes[nodeId];
       sceneNode.addNode(
-          this.processNodes(node, json.nodes, meshes));
+        this.processNodes(node, json.nodes, meshes));
     }
 
-    return sceneNode;
+    return { sceneNode, min, max, mesh_name };
   }
 
   processNodes(node, nodes, meshes) {
@@ -398,7 +400,7 @@ class Gltf2Resource {
       }
 
       this._dataPromise = fetch(resolveUri(this.json.uri, this.baseUrl))
-          .then((response) => response.arrayBuffer());
+        .then((response) => response.arrayBuffer());
     }
     return this._dataPromise;
   }
@@ -418,7 +420,7 @@ class Gltf2Resource {
         this._texture.genDataKey();
         let view = bufferViews[this.json.bufferView];
         view.dataView().then((dataView) => {
-          let blob = new Blob([dataView], {type: this.json.mimeType});
+          let blob = new Blob([dataView], { type: this.json.mimeType });
           img.src = window.URL.createObjectURL(blob);
         });
       }
