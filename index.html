@@ -74,12 +74,53 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let box_lid_white = new Gltf2Node({ url: 'media/gltf/box/box_lid_white.gltf' });
     box_lid_white.visible = false;
     let button_to_change_texture = new Gltf2Node({ url: 'media/gltf/box/button_to_change_texture.gltf' });
+    let info_button_1 = new Gltf2Node({ url: 'media/gltf/box/info_button_1.gltf' });
+    let info_button_2 = new Gltf2Node({ url: 'media/gltf/box/info_button_2.gltf' });
+    let info_button_3 = new Gltf2Node({ url: 'media/gltf/box/info_button_3.gltf' });
+    let info_button_4 = new Gltf2Node({ url: 'media/gltf/box/info_button_4.gltf' });
+    let info_button_5 = new Gltf2Node({ url: 'media/gltf/box/info_button_5.gltf' });
+
+    let info_text_1 = new Gltf2Node({ url: 'media/gltf/box/info_text_1.gltf' });
+    let info_text_2 = new Gltf2Node({ url: 'media/gltf/box/info_text_2.gltf' });
+    let info_text_3 = new Gltf2Node({ url: 'media/gltf/box/info_text_3.gltf' });
+    let info_text_4 = new Gltf2Node({ url: 'media/gltf/box/info_text_4.gltf' });
+    let info_text_5 = new Gltf2Node({ url: 'media/gltf/box/info_text_5.gltf' });
+    let info_image_1 = new Gltf2Node({ url: 'media/gltf/box/info_image_1.gltf' });
+    let info_image_2 = new Gltf2Node({ url: 'media/gltf/box/info_image_2.gltf' });
+    let info_image_3 = new Gltf2Node({ url: 'media/gltf/box/info_image_3.gltf' });
+    let info_image_4 = new Gltf2Node({ url: 'media/gltf/box/info_image_4.gltf' });
+    let info_image_5 = new Gltf2Node({ url: 'media/gltf/box/info_image_5.gltf' });
+    info_text_1.visible = false;
+    info_text_2.visible = false;
+    info_text_3.visible = false;
+    info_text_4.visible = false;
+    info_text_5.visible = false;
+    info_image_1.visible = false;
+    info_image_2.visible = false;
+    info_image_3.visible = false;
+    info_image_4.visible = false;
+    info_image_5.visible = false;
 
     box_parent.addNode(box);
     box_parent.addNode(box_lid_red);
     box_parent.addNode(box_lid_zebra);
     box_parent.addNode(box_lid_white);
     box_parent.addNode(button_to_change_texture);
+    box_parent.addNode(info_button_1);
+    box_parent.addNode(info_button_2);
+    box_parent.addNode(info_button_3);
+    box_parent.addNode(info_button_4);
+    box_parent.addNode(info_button_5);
+    box_parent.addNode(info_text_1);
+    box_parent.addNode(info_text_2);
+    box_parent.addNode(info_text_3);
+    box_parent.addNode(info_text_4);
+    box_parent.addNode(info_text_5);
+    box_parent.addNode(info_image_1);
+    box_parent.addNode(info_image_2);
+    box_parent.addNode(info_image_3);
+    box_parent.addNode(info_image_4);
+    box_parent.addNode(info_image_5);
 
     box_parent.visible = false;
     scene.addNode(box_parent);
@@ -187,76 +228,119 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           stage = 2;
           rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0];
         }
-        colided = checkCollisionChangeTextureButton();
-        if (colided) {
-          if (textureID == 0) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = true;
-            box_lid_white.visible = false;
-            textureID = 1;
-          }
-          else if (textureID == 1) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = true;
-            textureID = 2;
-          }
-          else if (textureID == 2) {
-            box_lid_red.visible = true;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = false;
-            textureID = 0;
-          }
-        }
+        OnChangeTextureButtonClick();
+        OnInfoButtonsClick();
       }
       else if (stage == 2) {
-        let colided = checkCollisionChangeTextureButton();
-        if (colided) {
-          if (textureID == 0) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = true;
-            box_lid_white.visible = false;
-            textureID = 1;
-          }
-          else if (textureID == 1) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = true;
-            textureID = 2;
-          }
-          else if (textureID == 2) {
-            box_lid_red.visible = true;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = false;
-            textureID = 0;
-          }
-        }
+        OnChangeTextureButtonClick();
+        OnInfoButtonsClick();
       }
       else if (stage == 3) {
-        let colided = checkCollisionChangeTextureButton();
+        let colided = checkCollisionLid();
         if (colided) {
-          if (textureID == 0) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = true;
-            box_lid_white.visible = false;
-            textureID = 1;
-          }
-          else if (textureID == 1) {
-            box_lid_red.visible = false;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = true;
-            textureID = 2;
-          }
-          else if (textureID == 2) {
-            box_lid_red.visible = true;
-            box_lid_zebra.visible = false;
-            box_lid_white.visible = false;
-            textureID = 0;
-          }
+          stage = 4;
+          rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0]; // Unnecessary
+        }
+        OnChangeTextureButtonClick();
+        OnInfoButtonsClick();
+      }
+      else if (stage == 4) {
+        OnChangeTextureButtonClick();
+        OnInfoButtonsClick();
+      }
+    }
+
+    function OnChangeTextureButtonClick() {
+      let colided = checkCollisionChangeTextureButton();
+      if (colided) {
+        if (textureID == 0) {
+          box_lid_red.visible = false;
+          box_lid_zebra.visible = true;
+          box_lid_white.visible = false;
+          textureID = 1;
+        }
+        else if (textureID == 1) {
+          box_lid_red.visible = false;
+          box_lid_zebra.visible = false;
+          box_lid_white.visible = true;
+          textureID = 2;
+        }
+        else if (textureID == 2) {
+          box_lid_red.visible = true;
+          box_lid_zebra.visible = false;
+          box_lid_white.visible = false;
+          textureID = 0;
         }
       }
     }
 
+    function OnInfoButtonsClick() {
+      let colided = checkCollisionInfoButton1();
+      if (colided) {
+        info_text_1.visible = true;
+        info_text_2.visible = false;
+        info_text_3.visible = false;
+        info_text_4.visible = false;
+        info_text_5.visible = false;
+        info_image_1.visible = true;
+        info_image_2.visible = false;
+        info_image_3.visible = false;
+        info_image_4.visible = false;
+        info_image_5.visible = false;
+      }
+      colided = checkCollisionInfoButton2();
+      if (colided) {
+        info_text_1.visible = false;
+        info_text_2.visible = true;
+        info_text_3.visible = false;
+        info_text_4.visible = false;
+        info_text_5.visible = false;
+        info_image_1.visible = false;
+        info_image_2.visible = true;
+        info_image_3.visible = false;
+        info_image_4.visible = false;
+        info_image_5.visible = false;
+      }
+      colided = checkCollisionInfoButton3();
+      if (colided) {
+        info_text_1.visible = false;
+        info_text_2.visible = false;
+        info_text_3.visible = true;
+        info_text_4.visible = false;
+        info_text_5.visible = false;
+        info_image_1.visible = false;
+        info_image_2.visible = false;
+        info_image_3.visible = true;
+        info_image_4.visible = false;
+        info_image_5.visible = false;
+      }
+      colided = checkCollisionInfoButton4();
+      if (colided) {
+        info_text_1.visible = false;
+        info_text_2.visible = false;
+        info_text_3.visible = false;
+        info_text_4.visible = true;
+        info_text_5.visible = false;
+        info_image_1.visible = false;
+        info_image_2.visible = false;
+        info_image_3.visible = false;
+        info_image_4.visible = true;
+        info_image_5.visible = false;
+      }
+      colided = checkCollisionInfoButton5();
+      if (colided) {
+        info_text_1.visible = false;
+        info_text_2.visible = false;
+        info_text_3.visible = false;
+        info_text_4.visible = false;
+        info_text_5.visible = true;
+        info_image_1.visible = false;
+        info_image_2.visible = false;
+        info_image_3.visible = false;
+        info_image_4.visible = false;
+        info_image_5.visible = true;
+      }
+    }
 
     var viewerPose;
     function checkCollisionLid() {
@@ -294,6 +378,122 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           button_to_change_texture.max[0] + box_parent.position.x,
           button_to_change_texture.max[1] + box_parent.position.y,
           button_to_change_texture.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function checkCollisionInfoButton1() {
+      if (viewerPose) {
+        let min = [
+          info_button_1.min[0] + box_parent.position.x,
+          info_button_1.min[1] + box_parent.position.y,
+          info_button_1.min[2] + box_parent.position.z
+        ];
+        let max = [
+          info_button_1.max[0] + box_parent.position.x,
+          info_button_1.max[1] + box_parent.position.y,
+          info_button_1.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function checkCollisionInfoButton2() {
+      if (viewerPose) {
+        let min = [
+          info_button_2.min[0] + box_parent.position.x,
+          info_button_2.min[1] + box_parent.position.y,
+          info_button_2.min[2] + box_parent.position.z
+        ];
+        let max = [
+          info_button_2.max[0] + box_parent.position.x,
+          info_button_2.max[1] + box_parent.position.y,
+          info_button_2.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function checkCollisionInfoButton3() {
+      if (viewerPose) {
+        let min = [
+          info_button_3.min[0] + box_parent.position.x,
+          info_button_3.min[1] + box_parent.position.y,
+          info_button_3.min[2] + box_parent.position.z
+        ];
+        let max = [
+          info_button_3.max[0] + box_parent.position.x,
+          info_button_3.max[1] + box_parent.position.y,
+          info_button_3.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function checkCollisionInfoButton4() {
+      if (viewerPose) {
+        let min = [
+          info_button_4.min[0] + box_parent.position.x,
+          info_button_4.min[1] + box_parent.position.y,
+          info_button_4.min[2] + box_parent.position.z
+        ];
+        let max = [
+          info_button_4.max[0] + box_parent.position.x,
+          info_button_4.max[1] + box_parent.position.y,
+          info_button_4.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function checkCollisionInfoButton5() {
+      if (viewerPose) {
+        let min = [
+          info_button_5.min[0] + box_parent.position.x,
+          info_button_5.min[1] + box_parent.position.y,
+          info_button_5.min[2] + box_parent.position.z
+        ];
+        let max = [
+          info_button_5.max[0] + box_parent.position.x,
+          info_button_5.max[1] + box_parent.position.y,
+          info_button_5.max[2] + box_parent.position.z
         ];
         let transform = viewerPose.transform;
         let ray = new Ray(transform.matrix);
@@ -367,7 +567,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           stage = 3;
         }
       }
-      else if(stage == 3){
+      else if (stage == 3) {
         reticle.visible = false;
         if (xrHitTestSource && viewerPose) {
           var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
@@ -376,6 +576,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             reticle.visible = true;
             reticle.matrix = pose.transform.matrix;
           }
+        }
+      }
+      else if (stage == 4) {
+        reticle.visible = false;
+        if (xrHitTestSource && viewerPose) {
+          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
+          if (xrHitTestResults.length > 0) {
+            let pose = xrHitTestResults[0].getPose(xrRefSpace);
+            reticle.visible = true;
+            reticle.matrix = pose.transform.matrix;
+          }
+        }
+        animation_t -= ts;
+        var bp = box_parent.position;
+        var m = mat4.create();
+        let rm = mat4.rotate_(m, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
+        let offset = vec3.rotateZ_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(90.0 * animation_t));
+        let position__ = [bp.x + offset[0], bp.y + offset[1], bp.z + offset[2]];
+        let tm = mat4.translate_(m, offset);
+        m = mat4.multiply(m, tm, rm);
+        box_lid_red.matrix = m;
+        box_lid_zebra.matrix = m;
+        box_lid_white.matrix = m;
+
+        if (animation_t <= 0.0) {
+          stage = 1;
         }
       }
 
