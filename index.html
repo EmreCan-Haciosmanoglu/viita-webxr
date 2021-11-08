@@ -66,10 +66,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     scene.enableStats(false);
 
     let box_parent = new Node();
+
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
-    let box_lid = new Gltf2Node({ url: 'media/gltf/box/box_lid.gltf' });
+    let box_lid_red = new Gltf2Node({ url: 'media/gltf/box/box_lid_red.gltf' });
+    let box_lid_zebra = new Gltf2Node({ url: 'media/gltf/box/box_lid_zebra.gltf' });
+    box_lid_zebra.visible = false;
+    let box_lid_white = new Gltf2Node({ url: 'media/gltf/box/box_lid_white.gltf' });
+    box_lid_white.visible = false;
+    let button_to_change_texture = new Gltf2Node({ url: 'media/gltf/box/button_to_change_texture.gltf' });
+
     box_parent.addNode(box);
-    box_parent.addNode(box_lid);
+    box_parent.addNode(box_lid_red);
+    box_parent.addNode(box_lid_zebra);
+    box_parent.addNode(box_lid_white);
+    box_parent.addNode(button_to_change_texture);
+
     box_parent.visible = false;
     scene.addNode(box_parent);
 
@@ -163,6 +174,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let ts = 60.0 / (1000.0 * slowness);
     var animation_t = 0.0;
     var rotation_center;
+    var textureID = 0;
     function onSelect(event) {
       if (stage == 0) {
         if (box_parent.visible) {
@@ -170,44 +182,103 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
       else if (stage == 1) {
-        let colided = checkCollision();
+        let colided = checkCollisionLid();
         if (colided) {
           stage = 2;
-          rotation_center = [box_lid.min[0], box_lid.min[1], 0.0];
-          reticle.visible = false;
+          rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0];
+          reticle.visible =
+            false;
+        }
+        colided = checkCollisionChangeTextureButton();
+        if (colided) {
+          if (textureID == 0) {
+            box_lid_red.visible = false;
+            box_lid_zebra.visible = true;
+            box_lid_white.visible = false;
+            textureID = 1;
+          }
+          else if (textureID == 1) {
+            box_lid_red.visible = false;
+            box_lid_zebra.visible = false;
+            box_lid_white.visible = true;
+            textureID = 2;
+          }
+          else if (textureID == 2) {
+            box_lid_red.visible = true;
+            box_lid_zebra.visible = false;
+            box_lid_white.visible = false;
+            textureID = 0;
+          }
         }
       }
       else if (stage == 2) {
-        //var bm = box_lid.matrix;
-        //var bp = box_parent.position;
-        //var m1 = mat4.translate_(bm, [-bp.x, -bp.y, -bp.z]);
-        //var m2 = mat4.rotate_(m1, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
-        //var m3 = mat4.translate_(m2, [bp.x, bp.y, bp.z]);
-        //var p = mat4.rotate_point([0, 0, 0], glMatrix.toRadian(90.0 * animation_t), rotation_center);
-        //var m4 = mat4.translate_(m3, p);
-        //box_lid.matrix = m4;
+      }
+      else if (stage == 3) {
+        let colided = checkCollisionChangeTextureButton();
+        if (colided) {
+          if (textureID == 0) {
+            box_lid_red.visible = false;
+            box_lid_zebra.visible = true;
+            box_lid_white.visible = false;
+            textureID = 1;
+          }
+          else if (textureID == 1) {
+            box_lid_red.visible = false;
+            box_lid_zebra.visible = false;
+            box_lid_white.visible = true;
+            textureID = 2;
+          }
+          else if (textureID == 2) {
+            box_lid_red.visible = true;
+            box_lid_zebra.visible = false;
+            box_lid_white.visible = false;
+            textureID = 0;
+          }
+        }
       }
     }
 
 
     var viewerPose;
-    function checkCollision() {
+    function checkCollisionLid() {
       if (viewerPose) {
         let min = [
-          box_lid.min[0] + box_parent.position.x,
-          box_lid.min[1] + box_parent.position.y,
-          box_lid.min[2] + box_parent.position.z
+          box_lid_red.min[0] + box_parent.position.x,
+          box_lid_red.min[1] + box_parent.position.y,
+          box_lid_red.min[2] + box_parent.position.z
         ];
         let max = [
-          box_lid.max[0] + box_parent.position.x,
-          box_lid.max[1] + box_parent.position.y,
-          box_lid.max[2] + box_parent.position.z
+          box_lid_red.max[0] + box_parent.position.x,
+          box_lid_red.max[1] + box_parent.position.y,
+          box_lid_red.max[2] + box_parent.position.z
         ];
         let transform = viewerPose.transform;
         let ray = new Ray(transform.matrix);
         let direction = ray.direction;
         var position = transform.position;
-        //let colided = check_ray_box_intersection(viewerPose.transform.position, direction, min, max, __, box_parent.position);
+        let result = ray.intersectsAABB(min, max);
+        if (result) {
+          return true;
+        }
+      }
+      return false;
+    }
+    function checkCollisionChangeTextureButton() {
+      if (viewerPose) {
+        let min = [
+          button_to_change_texture.min[0] + box_parent.position.x,
+          button_to_change_texture.min[1] + box_parent.position.y,
+          button_to_change_texture.min[2] + box_parent.position.z
+        ];
+        let max = [
+          button_to_change_texture.max[0] + box_parent.position.x,
+          button_to_change_texture.max[1] + box_parent.position.y,
+          button_to_change_texture.max[2] + box_parent.position.z
+        ];
+        let transform = viewerPose.transform;
+        let ray = new Ray(transform.matrix);
+        let direction = ray.direction;
+        var position = transform.position;
         let result = ray.intersectsAABB(min, max);
         if (result) {
           return true;
@@ -260,7 +331,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         //let tm = mat4.translate_(m, position__);
         let tm = mat4.translate_(m, offset);
         m = mat4.multiply(m, tm, rm);
-        box_lid.matrix = m;
+        box_lid_red = m;
+        box_lid_zebra = m;
+        box_lid_white = m;
+        button_to_change_texture
+
         if (animation_t >= 1.0) {
           stage = 3;
         }
