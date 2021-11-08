@@ -80,26 +80,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let info_button_4 = new Gltf2Node({ url: 'media/gltf/box/info_button_4.gltf' });
     let info_button_5 = new Gltf2Node({ url: 'media/gltf/box/info_button_5.gltf' });
 
-    let info_text_1 = new Gltf2Node({ url: 'media/gltf/box/info_text_1.gltf' });
-    let info_text_2 = new Gltf2Node({ url: 'media/gltf/box/info_text_2.gltf' });
-    let info_text_3 = new Gltf2Node({ url: 'media/gltf/box/info_text_3.gltf' });
-    let info_text_4 = new Gltf2Node({ url: 'media/gltf/box/info_text_4.gltf' });
-    let info_text_5 = new Gltf2Node({ url: 'media/gltf/box/info_text_5.gltf' });
-    let info_image_1 = new Gltf2Node({ url: 'media/gltf/box/info_image_1.gltf' });
-    let info_image_2 = new Gltf2Node({ url: 'media/gltf/box/info_image_2.gltf' });
-    let info_image_3 = new Gltf2Node({ url: 'media/gltf/box/info_image_3.gltf' });
-    let info_image_4 = new Gltf2Node({ url: 'media/gltf/box/info_image_4.gltf' });
-    let info_image_5 = new Gltf2Node({ url: 'media/gltf/box/info_image_5.gltf' });
-    info_text_1.visible = false;
-    info_text_2.visible = false;
-    info_text_3.visible = false;
-    info_text_4.visible = false;
-    info_text_5.visible = false;
-    info_image_1.visible = false;
-    info_image_2.visible = false;
-    info_image_3.visible = false;
-    info_image_4.visible = false;
-    info_image_5.visible = false;
+    let info_1 = new Gltf2Node({ url: 'media/gltf/box/info_1.gltf' });
+    let info_2 = new Gltf2Node({ url: 'media/gltf/box/info_2.gltf' });
+    let info_3 = new Gltf2Node({ url: 'media/gltf/box/info_3.gltf' });
+    let info_4 = new Gltf2Node({ url: 'media/gltf/box/info_4.gltf' });
+    let info_5 = new Gltf2Node({ url: 'media/gltf/box/info_5.gltf' });
+    info_1.visible = false;
+    info_2.visible = false;
+    info_3.visible = false;
+    info_4.visible = false;
+    info_5.visible = false;
 
     box_parent.addNode(box);
     box_parent.addNode(box_lid_red);
@@ -111,16 +101,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.addNode(info_button_3);
     box_parent.addNode(info_button_4);
     box_parent.addNode(info_button_5);
-    box_parent.addNode(info_text_1);
-    box_parent.addNode(info_text_2);
-    box_parent.addNode(info_text_3);
-    box_parent.addNode(info_text_4);
-    box_parent.addNode(info_text_5);
-    box_parent.addNode(info_image_1);
-    box_parent.addNode(info_image_2);
-    box_parent.addNode(info_image_3);
-    box_parent.addNode(info_image_4);
-    box_parent.addNode(info_image_5);
+    box_parent.addNode(info_1);
+    box_parent.addNode(info_2);
+    box_parent.addNode(info_3);
+    box_parent.addNode(info_4);
+    box_parent.addNode(info_5);
 
     box_parent.visible = false;
     scene.addNode(box_parent);
@@ -226,7 +211,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let colided = checkCollisionLid();
         if (colided) {
           stage = 2;
-          rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0];
+          //rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0];
+          rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
@@ -239,7 +225,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let colided = checkCollisionLid();
         if (colided) {
           stage = 4;
-          rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0]; // Unnecessary
+          //rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0]; // Unnecessary
+          rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]]; // Unnecessary
         }
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
@@ -277,68 +264,43 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     function OnInfoButtonsClick() {
       let colided = checkCollisionInfoButton1();
       if (colided) {
-        info_text_1.visible = true;
-        info_text_2.visible = false;
-        info_text_3.visible = false;
-        info_text_4.visible = false;
-        info_text_5.visible = false;
-        info_image_1.visible = true;
-        info_image_2.visible = false;
-        info_image_3.visible = false;
-        info_image_4.visible = false;
-        info_image_5.visible = false;
+        info_1.visible = true;
+        info_2.visible = false;
+        info_3.visible = false;
+        info_4.visible = false;
+        info_5.visible = false;
       }
       colided = checkCollisionInfoButton2();
       if (colided) {
-        info_text_1.visible = false;
-        info_text_2.visible = true;
-        info_text_3.visible = false;
-        info_text_4.visible = false;
-        info_text_5.visible = false;
-        info_image_1.visible = false;
-        info_image_2.visible = true;
-        info_image_3.visible = false;
-        info_image_4.visible = false;
-        info_image_5.visible = false;
+        info_1.visible = false;
+        info_2.visible = true;
+        info_3.visible = false;
+        info_4.visible = false;
+        info_5.visible = false;
       }
       colided = checkCollisionInfoButton3();
       if (colided) {
-        info_text_1.visible = false;
-        info_text_2.visible = false;
-        info_text_3.visible = true;
-        info_text_4.visible = false;
-        info_text_5.visible = false;
-        info_image_1.visible = false;
-        info_image_2.visible = false;
-        info_image_3.visible = true;
-        info_image_4.visible = false;
-        info_image_5.visible = false;
+        info_1.visible = false;
+        info_2.visible = false;
+        info_3.visible = true;
+        info_4.visible = false;
+        info_5.visible = false;
       }
       colided = checkCollisionInfoButton4();
       if (colided) {
-        info_text_1.visible = false;
-        info_text_2.visible = false;
-        info_text_3.visible = false;
-        info_text_4.visible = true;
-        info_text_5.visible = false;
-        info_image_1.visible = false;
-        info_image_2.visible = false;
-        info_image_3.visible = false;
-        info_image_4.visible = true;
-        info_image_5.visible = false;
+        info_1.visible = false;
+        info_2.visible = false;
+        info_3.visible = false;
+        info_4.visible = true;
+        info_5.visible = false;
       }
       colided = checkCollisionInfoButton5();
       if (colided) {
-        info_text_1.visible = false;
-        info_text_2.visible = false;
-        info_text_3.visible = false;
-        info_text_4.visible = false;
-        info_text_5.visible = true;
-        info_image_1.visible = false;
-        info_image_2.visible = false;
-        info_image_3.visible = false;
-        info_image_4.visible = false;
-        info_image_5.visible = true;
+        info_1.visible = false;
+        info_2.visible = false;
+        info_3.visible = false;
+        info_4.visible = false;
+        info_5.visible = true;
       }
     }
 
@@ -508,7 +470,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
 
-
     // Called every time a XRSession requests that a new frame be drawn.
     function onXRFrame(t, frame) {
       let session = frame.session;
@@ -554,8 +515,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         animation_t += ts;
         var bp = box_parent.position;
         var m = mat4.create();
-        let rm = mat4.rotate_(m, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
-        let offset = vec3.rotateZ_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(90.0 * animation_t));
+        let rm = mat4.rotate_(m, glMatrix.toRadian(-90.0 * animation_t), [1, 0, 0]);
+        let offset = vec3.rotateX_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(-90.0 * animation_t));
         let position__ = [bp.x + offset[0], bp.y + offset[1], bp.z + offset[2]];
         let tm = mat4.translate_(m, offset);
         m = mat4.multiply(m, tm, rm);
@@ -591,8 +552,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         animation_t -= ts;
         var bp = box_parent.position;
         var m = mat4.create();
-        let rm = mat4.rotate_(m, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
-        let offset = vec3.rotateZ_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(90.0 * animation_t));
+        let rm = mat4.rotate_(m, glMatrix.toRadian(-90.0 * animation_t),  [1, 0, 0]);
+        let offset = vec3.rotateX_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(-90.0 * animation_t));
         let position__ = [bp.x + offset[0], bp.y + offset[1], bp.z + offset[2]];
         let tm = mat4.translate_(m, offset);
         m = mat4.multiply(m, tm, rm);

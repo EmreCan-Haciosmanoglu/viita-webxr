@@ -567,6 +567,26 @@ export function rotateX(out, a, b, c) {
 
   return out;
 }
+export function rotateX_(a, b, c) {
+  let out = [0.0, 0.0, 0.0];
+  let p = [], r = [];
+  //Translate point to the origin
+  p[0] = a[0] - b[0];
+  p[1] = a[1] - b[1];
+  p[2] = a[2] - b[2];
+
+  //perform rotation
+  r[0] = p[0];
+  r[1] = p[1] * Math.cos(c) - p[2] * Math.sin(c);
+  r[2] = p[1] * Math.sin(c) + p[2] * Math.cos(c);
+
+  //translate to correct position
+  out[0] = r[0] + b[0];
+  out[1] = r[1] + b[1];
+  out[2] = r[2] + b[2];
+
+  return out;
+}
 
 /**
  * Rotate a 3D vector around the y-axis
