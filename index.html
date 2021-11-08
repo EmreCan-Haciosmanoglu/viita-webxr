@@ -158,23 +158,34 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       session.end();
     }
 
-    var stage_1 = true;
-    var stage_2 = false;
-
+    var stage = 0;
+    let slowness = 2.3;
+    let ts = 60.0 / (1000.0 * slowness);
+    var animation_t = 0.0;
+    var rotation_center;
     function onSelect(event) {
-      if (stage_1) {
+      if (stage == 0) {
         if (box_parent.visible) {
-          stage_1 = false;
-          stage_2 = true;
+          stage = 1;
         }
       }
-      else if (stage_2) {
+      else if (stage == 1) {
         let colided = checkCollision();
         if (colided) {
-          var m = box_lid.matrix;
-          box_lid.matrix = mat4.rotate(m, box_lid.matrix, glMatrix.toRadian(90), [1, 0, 0]);
-          stage_2 = false;
+          stage = 2;
+          rotation_center = [box_lid.min[0], box_lid.min[1], 0.0];
+          reticle.visible = false;
         }
+      }
+      else if (stage == 2) {
+        //var bm = box_lid.matrix;
+        //var bp = box_parent.position;
+        //var m1 = mat4.translate_(bm, [-bp.x, -bp.y, -bp.z]);
+        //var m2 = mat4.rotate_(m1, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
+        //var m3 = mat4.translate_(m2, [bp.x, bp.y, bp.z]);
+        //var p = mat4.rotate_point([0, 0, 0], glMatrix.toRadian(90.0 * animation_t), rotation_center);
+        //var m4 = mat4.translate_(m3, p);
+        //box_lid.matrix = m4;
       }
     }
 
@@ -213,21 +224,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       viewerPose = frame.getViewerPose(xrRefSpace);
       // If we have a hit test source, get its results for the frame
       // and use the pose to display a reticle in the scene.
-      if (stage_1) {
+      if (stage == 0) {
         box_parent.visible = false;
         if (xrHitTestSource && viewerPose) {
           var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
           if (xrHitTestResults.length > 0) {
             let pose = xrHitTestResults[0].getPose(xrRefSpace);
             box_parent.visible = true;
-            box_parent.matrix = pose.transform.matrix;
-            //box_parent.translation = pose.transform.position;
+            let pos = pose.transform.position;
+            pos = [pos.x, pos.y, pos.z];
+            box_parent.matrix = mat4.fromTranslation(box_parent.matrix, pos);
             box_parent.position = pose.transform.position;
-            //box_lid.position = pose.transform.position;
           }
         }
       }
-      else {
+      else if (stage == 1) {
         reticle.visible = false;
         if (xrHitTestSource && viewerPose) {
           var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
@@ -236,6 +247,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             reticle.visible = true;
             reticle.matrix = pose.transform.matrix;
           }
+        }
+        animation_t = 0.0;
+      }
+      else if (stage == 2) {
+        animation_t += ts;
+        var bp = box_parent.position;
+        var m = mat4.create();
+        let rm = mat4.rotate_(m, glMatrix.toRadian(90.0 * animation_t), [0, 0, 1]);
+        let offset = vec3.rotateZ_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(90.0 * animation_t));
+        let position__ = [bp.x + offset[0], bp.y + offset[1], bp.z + offset[2]];
+        //let tm = mat4.translate_(m, position__);
+        let tm = mat4.translate_(m, offset);
+        m = mat4.multiply(m, tm, rm);
+        box_lid.matrix = m;
+        if (animation_t >= 1.0) {
+          stage = 3;
         }
       }
 
