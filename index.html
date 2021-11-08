@@ -68,6 +68,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let box_parent = new Node();
 
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
+    let worm = new Gltf2Node({ url: 'media/gltf/box/worm.gltf' });
     let box_lid_red = new Gltf2Node({ url: 'media/gltf/box/box_lid_red.gltf' });
     let box_lid_zebra = new Gltf2Node({ url: 'media/gltf/box/box_lid_zebra.gltf' });
     box_lid_zebra.visible = false;
@@ -92,6 +93,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     info_5.visible = false;
 
     box_parent.addNode(box);
+    box_parent.addNode(worm);
     box_parent.addNode(box_lid_red);
     box_parent.addNode(box_lid_zebra);
     box_parent.addNode(box_lid_white);
