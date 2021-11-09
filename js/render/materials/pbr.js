@@ -211,7 +211,7 @@ vec4 fragment_main() {
   //color = pow(color, vec3(1.0/2.2));
 
   //return vec4(color, baseColor.a);
-  //return baseColor;
+  return baseColor;
 }`;
 
 export class PbrMaterial extends Material {
