@@ -70,6 +70,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
     let worm = new Gltf2Node({ url: 'media/gltf/box/worm.gltf' });
     let dirt = new Gltf2Node({ url: 'media/gltf/box/dirt.gltf' });
+    let cross = new Gltf2Node({ url: 'media/gltf/box/cross.gltf' });
+    let title = new Gltf2Node({ url: 'media/gltf/box/title.gltf' });
     let box_lid_red = new Gltf2Node({ url: 'media/gltf/box/box_lid_red.gltf' });
     let box_lid_zebra = new Gltf2Node({ url: 'media/gltf/box/box_lid_zebra.gltf' });
     box_lid_zebra.visible = false;
@@ -96,6 +98,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.addNode(box);
     box_parent.addNode(worm);
     box_parent.addNode(dirt);
+    box_parent.addNode(cross);
+    box_parent.addNode(title);
     box_parent.addNode(box_lid_red);
     box_parent.addNode(box_lid_zebra);
     box_parent.addNode(box_lid_white);
@@ -229,8 +233,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let colided = checkCollisionLid();
         if (colided) {
           stage = 4;
-          //rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0]; // Unnecessary
-          rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]]; // Unnecessary
+          rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
@@ -556,7 +559,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         animation_t -= ts;
         var bp = box_parent.position;
         var m = mat4.create();
-        let rm = mat4.rotate_(m, glMatrix.toRadian(-90.0 * animation_t),  [1, 0, 0]);
+        let rm = mat4.rotate_(m, glMatrix.toRadian(-90.0 * animation_t), [1, 0, 0]);
         let offset = vec3.rotateX_([0.0, 0.0, 0.0], rotation_center, glMatrix.toRadian(-90.0 * animation_t));
         let position__ = [bp.x + offset[0], bp.y + offset[1], bp.z + offset[2]];
         let tm = mat4.translate_(m, offset);
