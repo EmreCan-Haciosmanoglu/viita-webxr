@@ -79,3 +79,111 @@ canvas {
   color: rgb(80, 168, 252);
   background-color: rgba(255, 255, 255, 0.7);
 }
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #dfdec0;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+.header .logo {
+  width: 50%;
+  max-width: 480px;
+}
+.header .header-bottom {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.header .header-bottom img {
+  width: 20vw;
+  margin-left: 20px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  width: 90%;
+  gap: 40px;
+}
+.buttons .btn-cont {
+  width: 100%;
+}
+.buttons .btn-cont p {
+  width: 100%;
+  padding-top: 24px;
+  text-align: justify;
+}
+/*
+.buttons .btn-cont .button {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border-radius: 15px;
+  background-color: gray;
+  color: black;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 300;
+  text-align: center;
+}
+*/
+@media screen and (max-width: 700px) {
+  .buttons {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    width: 80%;
+    gap: 40px;
+  }
+  .buttons .button {
+    font-size: 18px;
+  }
+}
+.footer {
+  padding-bottom: 10vh;
+}
+.footer a {
+  color: black;
+  text-decoration: none;
+}
+#arButton{
+  display: block;
+  width: 100%;
+  align-self: center;
+  padding: 18px;
+  border-radius: 15px;
+  background-color: gray;
+  color: black;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 300;
+  text-align: center;
+  
+}
+#context{
+  width: 80vw;
+  text-align: center;
+}
+#button-here button{
+  margin: auto;
+  display: block;
+}

@@ -30,12 +30,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   <link rel='icon' type='image/png' sizes='96x96' href='favicon-96x96.png'>
   <link rel='stylesheet' href='css/common.css'>
 
-  <title>Viita</title>
+  <title>novohead</title>
 </head>
 
 <body>
-  <header>
-  </header>
+  <div class="header">
+    <img class="logo" src="./media/images/wurmm-1.jpg" alt="">
+    <div class="header-bottom">
+      Powered by
+      <a href="http://creativecommons.org/"><img src="./media/images/logo-oberoesterreich.svg" alt="Sparkasse Logo"></a>
+
+    </div>
+  </div>
+
+
+  <div id="button-here" class="btn-cont">
+    <img class="image-model" src="./media/images/ss.jpg">
+  </div>
+  <p id="context">Klicke auf das AR-Symbol rechts oben im Bild um die virtuelle Wurmkiste zu sehen. Der Ladevorgang kann
+    in einige Zeit in Anspruch nehmen.</p>
+
+  <div class="footer">
+    <a href="https://www.sparkasse.at/oberoesterreich/wir-ueber-uns/impressum">IMPRESSUM</a>
+  </div>
   <script type="module">
     import { WebXRButton } from './js/util/webxr-button.js';
     import { Scene } from './js/render/scenes/scene.js';
@@ -142,7 +159,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         textXRNotFoundTitle: "AR NOT FOUND",
         textExitXRTitle: "EXIT  AR",
       });
-      document.querySelector('header').appendChild(xrButton.domElement);
+      document.getElementById("button-here").appendChild(xrButton.domElement);
 
       if (navigator.xr) {
         navigator.xr.isSessionSupported('immersive-ar')
@@ -153,7 +170,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     function onRequestSession() {
-      return navigator.xr.requestSession('immersive-ar',
+      console.log("hey")
+      var res = navigator.xr.requestSession('immersive-ar',
         {
           requiredFeatures: ['local', 'hit-test'],
           domOverlay: { root: document.body }
@@ -162,6 +180,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           xrButton.setSession(session);
           onSessionStarted(session);
         });
+      console.log(res);
+      return res;
     }
     function onSessionStarted(session) {
       session.addEventListener('end', (event) => { xrButton.setSession(null); });
@@ -591,6 +611,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     // Start the XR application.
     initXR();
     xrButton.__onXRButtonClick();
+    onRequestSession();
   </script>
 </body>
 

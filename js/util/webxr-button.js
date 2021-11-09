@@ -452,11 +452,6 @@ export class WebXRButton {
     }
   }
 
-  /**
-   * Set the disabled attribute
-   * @param {boolean} disabled
-   * @private
-   */
   __setDisabledAttribute(disabled) {
     if (disabled || this.__forceDisabled) {
       this.domElement.setAttribute('disabled', 'true');
@@ -465,10 +460,6 @@ export class WebXRButton {
     }
   }
 
-  /**
-   * Handling click event from button
-   * @private
-   */
   __onXRButtonClick() {
     if (this.session) {
       this.options.onEndSession(this.session);
