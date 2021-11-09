@@ -70,6 +70,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     let box = new Gltf2Node({ url: 'media/gltf/box/box.gltf' });
     let worm = new Gltf2Node({ url: 'media/gltf/box/worm.gltf' });
+    let worm2 = new Gltf2Node({ url: 'media/gltf/box/worm2.gltf' });
     let dirt = new Gltf2Node({ url: 'media/gltf/box/dirt.gltf' });
     let cross = new Gltf2Node({ url: 'media/gltf/box/cross.gltf' });
     cross.visible = false;
@@ -99,6 +100,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     box_parent.addNode(box);
     box_parent.addNode(worm);
+    box_parent.addNode(worm2);
     //box_parent.addNode(dirt);
     box_parent.addNode(cross);
     box_parent.addNode(title);
