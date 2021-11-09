@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     // WebGL scene globals.
     let gl = null;
     let renderer = null;
+    let lightProbe = null;
     let scene = new Scene();
     scene.enableStats(false);
 
@@ -168,7 +169,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     function onSessionStarted(session) {
       session.addEventListener('end', (event) => { xrButton.setSession(null); });
       session.addEventListener('select', onSelect);
-
+      lightProbe = await session.requestLightProbe();
       if (!gl) {
         gl = createWebGLContext({
           xrCompatible: true
@@ -390,12 +391,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           let min = [
             box_lid_red.min[0] + box_parent.position.x,
             box_lid_red.min[1] + box_parent.position.y,
-            box_lid_red.min[2] + box_parent.position.z
+            box_lid_red.min[2] - (box_lid_red.max[1] - box_lid_red.max[1]) + box_parent.position.z
           ];
           let max = [
             box_lid_red.max[0] + box_parent.position.x,
             box_lid_red.min[1] + (box_lid_red.max[2] - box_lid_red.max[2]) + box_parent.position.y,
-            box_lid_red.min[2] - (box_lid_red.max[1] - box_lid_red.max[1]) + box_parent.position.z
+            box_lid_red.min[2] + box_parent.position.z
           ];
           return checkCollision(min, max);
         }
