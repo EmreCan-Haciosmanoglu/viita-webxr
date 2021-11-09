@@ -98,7 +98,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     box_parent.addNode(box);
     box_parent.addNode(worm);
-    box_parent.addNode(dirt);
+    //box_parent.addNode(dirt);
     box_parent.addNode(cross);
     box_parent.addNode(title);
     box_parent.addNode(box_lid_red);
@@ -355,7 +355,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     function checkCross() {
       if (viewerPose) {
-        if (cross.visible) return false;
+        if (!cross.visible) return false;
         let min = [
           cross.min[0] + box_parent.position.x,
           cross.min[1] + box_parent.position.y,
