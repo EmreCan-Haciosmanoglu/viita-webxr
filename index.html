@@ -375,7 +375,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     function checkCollisionLid() {
       if (viewerPose) {
-        if (true || animation_t <= 0.0) {
+        if (!true || animation_t <= 0.0) {
           let min = [
             box_lid_red.min[0] + box_parent.position.x,
             box_lid_red.min[1] + box_parent.position.y,
@@ -389,15 +389,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           return checkCollision(min, max);
         }
         else{
+          let bmin = box_lid_red.min;
+          let bmax = box_lid_red.max; 
+          let A = vec3.rotateX_(bmin, rotation_center, glMatrix.toRadian(-90.0));
+          let B = vec3.rotateX_(bmax, rotation_center, glMatrix.toRadian(-90.0));
           let min = [
-            box_lid_red.min[0] + box_parent.position.x,
-            box_lid_red.min[1] + box_parent.position.y,
-            box_lid_red.min[2] - (box_lid_red.max[1] - box_lid_red.min[1]) + box_parent.position.z
+            A[0] + box_parent.position.x,
+            A[1] + box_parent.position.y,
+            B[3] + box_parent.position.z
           ];
           let max = [
-            box_lid_red.max[0] + box_parent.position.x,
-            box_lid_red.min[1] + (box_lid_red.max[2] - box_lid_red.min[2]) + box_parent.position.y,
-            box_lid_red.min[2] + box_parent.position.z
+            B[0] + box_parent.position.x,
+            B[1] + box_parent.position.y,
+            A[2] + box_parent.position.z
           ];
           return checkCollision(min, max);
         }
