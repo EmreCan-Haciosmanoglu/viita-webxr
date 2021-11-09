@@ -388,20 +388,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           ];
           return checkCollision(min, max);
         }
-        else{
+        else {
           let bmin = box_lid_red.min;
-          let bmax = box_lid_red.max; 
+          let bmax = box_lid_red.max;
           let A = vec3.rotateX_(bmin, rotation_center, glMatrix.toRadian(-90.0));
           let B = vec3.rotateX_(bmax, rotation_center, glMatrix.toRadian(-90.0));
           let min = [
-            A[0] + box_parent.position.x,
-            A[1] + box_parent.position.y,
-            B[3] + box_parent.position.z
+            Math.min(A[0], B[0]) + box_parent.position.x,
+            Math.min(A[1], B[1]) + box_parent.position.y,
+            Math.min(A[2], B[2]) + box_parent.position.z
           ];
           let max = [
-            B[0] + box_parent.position.x,
-            B[1] + box_parent.position.y,
-            A[2] + box_parent.position.z
+            Math.max(A[0], B[0]) + box_parent.position.x,
+            Math.max(A[1], B[1]) + box_parent.position.y,
+            Math.max(A[2], B[2]) + box_parent.position.z
           ];
           return checkCollision(min, max);
         }
