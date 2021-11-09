@@ -71,6 +71,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let worm = new Gltf2Node({ url: 'media/gltf/box/worm.gltf' });
     let dirt = new Gltf2Node({ url: 'media/gltf/box/dirt.gltf' });
     let cross = new Gltf2Node({ url: 'media/gltf/box/cross.gltf' });
+    cross.visible = false;
     let title = new Gltf2Node({ url: 'media/gltf/box/title.gltf' });
     let box_lid_red = new Gltf2Node({ url: 'media/gltf/box/box_lid_red.gltf' });
     let box_lid_zebra = new Gltf2Node({ url: 'media/gltf/box/box_lid_zebra.gltf' });
@@ -219,13 +220,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let colided = checkCollisionLid();
         if (colided) {
           stage = 2;
-          //rotation_center = [box_lid_red.min[0], box_lid_red.min[1], 0.0];
           rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
+        onCrossClick();
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
       }
       else if (stage == 2) {
+        onCrossClick();
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
       }
@@ -235,10 +237,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           stage = 4;
           rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
+        onCrossClick();
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
       }
       else if (stage == 4) {
+        onCrossClick();
         OnChangeTextureButtonClick();
         OnInfoButtonsClick();
       }
@@ -268,6 +272,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
     }
 
+    function onCrossClick() {
+      let colided = checkCross();
+      if (colided) {
+        info_1.visible = false;
+        info_2.visible = false;
+        info_3.visible = false;
+        info_4.visible = false;
+        info_5.visible = false;
+        cross.visible = false;
+      }
+    }
+
     function OnInfoButtonsClick() {
       let colided = checkCollisionInfoButton1();
       if (colided) {
@@ -276,61 +292,113 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         info_3.visible = false;
         info_4.visible = false;
         info_5.visible = false;
+        cross.visible = true;
       }
-      colided = checkCollisionInfoButton2();
-      if (colided) {
-        info_1.visible = false;
-        info_2.visible = true;
-        info_3.visible = false;
-        info_4.visible = false;
-        info_5.visible = false;
-      }
-      colided = checkCollisionInfoButton3();
-      if (colided) {
-        info_1.visible = false;
-        info_2.visible = false;
-        info_3.visible = true;
-        info_4.visible = false;
-        info_5.visible = false;
-      }
-      colided = checkCollisionInfoButton4();
-      if (colided) {
-        info_1.visible = false;
-        info_2.visible = false;
-        info_3.visible = false;
-        info_4.visible = true;
-        info_5.visible = false;
-      }
-      colided = checkCollisionInfoButton5();
-      if (colided) {
-        info_1.visible = false;
-        info_2.visible = false;
-        info_3.visible = false;
-        info_4.visible = false;
-        info_5.visible = true;
+      else {
+        colided = checkCollisionInfoButton2();
+        if (colided) {
+          info_1.visible = false;
+          info_2.visible = true;
+          info_3.visible = false;
+          info_4.visible = false;
+          info_5.visible = false;
+          cross.visible = true;
+        }
+        else {
+          colided = checkCollisionInfoButton3();
+          if (colided) {
+            info_1.visible = false;
+            info_2.visible = false;
+            info_3.visible = true;
+            info_4.visible = false;
+            info_5.visible = false;
+            cross.visible = true;
+          }
+          else {
+            colided = checkCollisionInfoButton4();
+            if (colided) {
+              info_1.visible = false;
+              info_2.visible = false;
+              info_3.visible = false;
+              info_4.visible = true;
+              info_5.visible = false;
+              cross.visible = true;
+            }
+            else {
+              colided = checkCollisionInfoButton5();
+              if (colided) {
+                info_1.visible = false;
+                info_2.visible = false;
+                info_3.visible = false;
+                info_4.visible = false;
+                info_5.visible = true;
+                cross.visible = true;
+              }
+            }
+          }
+        }
       }
     }
 
     var viewerPose;
-    function checkCollisionLid() {
+    function checkCollision(min, max) {
+      let transform = viewerPose.transform;
+      let ray = new Ray(transform.matrix);
+      let direction = ray.direction;
+      var position = transform.position;
+      let result = ray.intersectsAABB(min, max);
+      if (result) {
+        return true;
+      }
+      return false;
+    }
+
+    function checkCross() {
       if (viewerPose) {
+        if (cross.visible) return false;
         let min = [
-          box_lid_red.min[0] + box_parent.position.x,
-          box_lid_red.min[1] + box_parent.position.y,
-          box_lid_red.min[2] + box_parent.position.z
+          cross.min[0] + box_parent.position.x,
+          cross.min[1] + box_parent.position.y,
+          cross.min[2] + box_parent.position.z
         ];
         let max = [
-          box_lid_red.max[0] + box_parent.position.x,
-          box_lid_red.max[1] + box_parent.position.y,
-          box_lid_red.max[2] + box_parent.position.z
+          cross.max[0] + box_parent.position.x,
+          cross.max[1] + box_parent.position.y,
+          cross.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
+        return checkCollision(min, max);
+      }
+      return false;
+    }
+
+    function checkCollisionLid() {
+      if (viewerPose) {
+        if (animation_t <= 0.0) {
+
+          let min = [
+            box_lid_red.min[0] + box_parent.position.x,
+            box_lid_red.min[1] + box_parent.position.y,
+            box_lid_red.min[2] + box_parent.position.z
+          ];
+          let max = [
+            box_lid_red.max[0] + box_parent.position.x,
+            box_lid_red.max[1] + box_parent.position.y,
+            box_lid_red.max[2] + box_parent.position.z
+          ];
+          return checkCollision(min, max);
+        }
+        else{
+          let min = [
+            box_lid_red.min[0] + box_parent.position.x,
+            box_lid_red.min[1] + box_parent.position.y,
+            box_lid_red.min[2] + box_parent.position.z
+          ];
+          let max = [
+            box_lid_red.max[0] + box_parent.position.x,
+            box_lid_red.max[1] + (box_lid_red.max[2] - box_lid_red.max[2]) + box_parent.position.y,
+            box_lid_red.max[2] - (box_lid_red.max[1] - box_lid_red.max[1]) + box_parent.position.z
+          ];
+          return checkCollision(min, max);
         }
       }
       return false;
@@ -348,14 +416,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           button_to_change_texture.max[1] + box_parent.position.y,
           button_to_change_texture.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
@@ -372,14 +433,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           info_button_1.max[1] + box_parent.position.y,
           info_button_1.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
@@ -395,14 +449,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           info_button_2.max[1] + box_parent.position.y,
           info_button_2.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
@@ -418,14 +465,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           info_button_3.max[1] + box_parent.position.y,
           info_button_3.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
@@ -441,14 +481,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           info_button_4.max[1] + box_parent.position.y,
           info_button_4.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
@@ -464,14 +497,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           info_button_5.max[1] + box_parent.position.y,
           info_button_5.max[2] + box_parent.position.z
         ];
-        let transform = viewerPose.transform;
-        let ray = new Ray(transform.matrix);
-        let direction = ray.direction;
-        var position = transform.position;
-        let result = ray.intersectsAABB(min, max);
-        if (result) {
-          return true;
-        }
+        return checkCollision(min, max);
       }
       return false;
     }
