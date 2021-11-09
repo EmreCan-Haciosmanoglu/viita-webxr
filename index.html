@@ -97,6 +97,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     info_4.visible = false;
     info_5.visible = false;
 
+    let apple = new Gltf2Node({ url: 'media/gltf/apple/apple.gltf' });
+
     box_parent.addNode(box);
     box_parent.addNode(worm);
     box_parent.addNode(dirt);
@@ -116,6 +118,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.addNode(info_3);
     box_parent.addNode(info_4);
     box_parent.addNode(info_5);
+    box_parent.addNode(apple);
+    
 
     box_parent.visible = false;
     scene.addNode(box_parent);
