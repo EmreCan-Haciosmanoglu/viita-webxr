@@ -217,19 +217,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
       else if (stage == 1) {
-        let colided = checkCollisionOpenLidButton();
-        if (colided) {
+        if (checkCollisionOpenLidButton()) {
           stage = 2;
           rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
-        onCrossClick();
-        OnChangeTextureButtonClick();
-        OnInfoButtonsClick();
+        else if (OnCrossClick()) { }
+        else if (OnChangeTextureButtonClick()) { }
+        else if (OnInfoButtonsClick()) { }
       }
       else if (stage == 2) {
-        onCrossClick();
-        OnChangeTextureButtonClick();
-        OnInfoButtonsClick();
+        if (OnCrossClick()) { }
+        else if (OnChangeTextureButtonClick()) { }
+        else if (OnInfoButtonsClick()) { }
       }
       else if (stage == 3) {
         let colided = checkCollisionOpenLidButton();
@@ -237,14 +236,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           stage = 4;
           rotation_center = [0.0, box_lid_red.min[1], box_lid_red.min[2]];
         }
-        onCrossClick();
-        OnChangeTextureButtonClick();
-        OnInfoButtonsClick();
+        else if (OnCrossClick()) { }
+        else if (OnChangeTextureButtonClick()) { }
+        else if (OnInfoButtonsClick()) { }
       }
       else if (stage == 4) {
-        onCrossClick();
-        OnChangeTextureButtonClick();
-        OnInfoButtonsClick();
+        if (OnCrossClick()) { }
+        else if (OnChangeTextureButtonClick()) { }
+        else if (OnInfoButtonsClick()) { }
       }
     }
 
@@ -269,10 +268,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           box_lid_white.visible = false;
           textureID = 0;
         }
+        
       }
+      return colided;
     }
 
-    function onCrossClick() {
+    function OnCrossClick() {
       let colided = checkCross();
       if (colided) {
         info_1.visible = false;
@@ -282,6 +283,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         info_5.visible = false;
         cross.visible = false;
       }
+      return colided;
     }
 
     function OnInfoButtonsClick() {
@@ -338,6 +340,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
         }
       }
+      return colided;
     }
 
     var viewerPose;
@@ -391,14 +394,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     function checkCollisionOpenLidButton() {
       if (viewerPose) {
         let min = [
-        button_to_open_and_close_lid.min[0] + box_parent.position.x,
-        button_to_open_and_close_lid.min[1] + box_parent.position.y,
-        button_to_open_and_close_lid.min[2] + box_parent.position.z
+          button_to_open_and_close_lid.min[0] + box_parent.position.x,
+          button_to_open_and_close_lid.min[1] + box_parent.position.y,
+          button_to_open_and_close_lid.min[2] + box_parent.position.z
         ];
         let max = [
-        button_to_open_and_close_lid.max[0] + box_parent.position.x,
-        button_to_open_and_close_lid.max[1] + box_parent.position.y,
-        button_to_open_and_close_lid.max[2] + box_parent.position.z
+          button_to_open_and_close_lid.max[0] + box_parent.position.x,
+          button_to_open_and_close_lid.max[1] + box_parent.position.y,
+          button_to_open_and_close_lid.max[2] + box_parent.position.z
         ];
         return checkCollision(min, max);
       }
