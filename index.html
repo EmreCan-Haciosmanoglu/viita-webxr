@@ -374,7 +374,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     function checkCollisionLid() {
       if (viewerPose) {
         if (animation_t <= 0.0) {
-
           let min = [
             box_lid_red.min[0] + box_parent.position.x,
             box_lid_red.min[1] + box_parent.position.y,
@@ -395,8 +394,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           ];
           let max = [
             box_lid_red.max[0] + box_parent.position.x,
-            box_lid_red.max[1] + (box_lid_red.max[2] - box_lid_red.max[2]) + box_parent.position.y,
-            box_lid_red.max[2] - (box_lid_red.max[1] - box_lid_red.max[1]) + box_parent.position.z
+            box_lid_red.min[1] + (box_lid_red.max[2] - box_lid_red.max[2]) + box_parent.position.y,
+            box_lid_red.min[2] - (box_lid_red.max[1] - box_lid_red.max[1]) + box_parent.position.z
           ];
           return checkCollision(min, max);
         }
