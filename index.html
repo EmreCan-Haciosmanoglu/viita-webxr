@@ -528,35 +528,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
       else if (stage == 1) {
-        reticle.visible = false;
-        if (xrHitTestSource && viewerPose) {
-          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
-          if (xrHitTestResults.length > 0) {
-            let pose = xrHitTestResults[0].getPose(xrRefSpace);
-            reticle.visible = true;
-            let ray = new Ray(viewerPose.transform.matrix);
-            let direction = vec3.normalize_(ray.direction);
-            let pos = viewerPose.transform.position;
-            pos = [pos.x+direction[0], pos.y+direction[1], pos.z+direction[2]];
-            reticle.matrix = mat4.fromTranslation_(pos);
-          }
-        }
+        move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace);
         animation_t = 0.0;
       }
       else if (stage == 2) {
-        reticle.visible = false;
-        if (xrHitTestSource && viewerPose) {
-          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
-          if (xrHitTestResults.length > 0) {
-            let pose = xrHitTestResults[0].getPose(xrRefSpace);
-            reticle.visible = true;
-            let ray = new Ray(viewerPose.transform.matrix);
-            let direction = vec3.normalize_(ray.direction);
-            let pos = viewerPose.transform.position;
-            pos = [pos.x+direction[0], pos.y+direction[1], pos.z+direction[2]];
-            reticle.matrix = mat4.fromTranslation_(pos);
-          }
-        }
+        move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace);
         animation_t += ts;
         var bp = box_parent.position;
         var m = mat4.create();
@@ -574,34 +550,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
       else if (stage == 3) {
-        reticle.visible = false;
-        if (xrHitTestSource && viewerPose) {
-          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
-          if (xrHitTestResults.length > 0) {
-            let pose = xrHitTestResults[0].getPose(xrRefSpace);
-            reticle.visible = true;
-            let ray = new Ray(viewerPose.transform.matrix);
-            let direction = vec3.normalize_(ray.direction);
-            let pos = viewerPose.transform.position;
-            pos = [pos.x+direction[0], pos.y+direction[1], pos.z+direction[2]];
-            reticle.matrix = mat4.fromTranslation_(pos);
-          }
-        }
+        move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace);
       }
       else if (stage == 4) {
-        reticle.visible = false;
-        if (xrHitTestSource && viewerPose) {
-          var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
-          if (xrHitTestResults.length > 0) {
-            let pose = xrHitTestResults[0].getPose(xrRefSpace);
-            reticle.visible = true;
-            let ray = new Ray(viewerPose.transform.matrix);
-            let direction = vec3.normalize_(ray.direction);
-            let pos = viewerPose.transform.position;
-            pos = [pos.x+direction[0], pos.y+direction[1], pos.z+direction[2]];
-            reticle.matrix = mat4.fromTranslation_(pos);
-          }
-        }
+        move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace);
         animation_t -= ts;
         var bp = box_parent.position;
         var m = mat4.create();
@@ -623,6 +575,27 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       session.requestAnimationFrame(onXRFrame);
       scene.drawXRFrame(frame, viewerPose);
       scene.endFrame();
+    }
+
+    function move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace) {
+      reticle.visible = false;
+      if (xrHitTestSource && viewerPose) {
+        var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);
+        if (xrHitTestResults.length > 0) {
+          let pose = xrHitTestResults[0].getPose(xrRefSpace);
+          reticle.visible = true;
+          let ray = new Ray(viewerPose.transform.matrix);
+          let direction = vec3.normalize_(ray.direction);
+          let pos = viewerPose.transform.position;
+          pos = [-pos.x, -pos.y, -pos.z];
+          let m1 = mat4.fromTranslation_(pos);
+          let m2 = mat4.multiply_(m1, viewerPose.transform.matrix);
+          pos = [-pos[0] + direction[0] * 0.2, -pos[1] + direction[1] * 0.2, -pos[2] + direction[2] * 0.2];
+          let m3 = mat4.fromTranslation_(pos);
+          let m4 = mat4.multiply_(m3, m2);
+          reticle.matrix = m4;
+        }
+      }
     }
     // Start the XR application.
     initXR();
