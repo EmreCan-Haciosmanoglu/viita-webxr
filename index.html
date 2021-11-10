@@ -145,9 +145,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     vec3.set(shadow.scale, 0.15, 0.15, 0.15);
     box_parent.addNode(shadow);
 
-    const MAX_FLOWERS = 30;
-    let flowers = [];
-
     // Ensure the background is transparent for AR.
     scene.clear = false;
 
@@ -169,6 +166,28 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
     }
 
+    function resetState() {
+      cross.visible = false;
+      box_lid_red.visible = true;
+      box_lid_zebra.visible = false;
+      box_lid_white.visible = false;
+      reticle.visible = false;
+      info_1.visible = false;
+      info_2.visible = false;
+      info_3.visible = false;
+      info_4.visible = false;
+      info_5.visible = false;
+      stage = 0;
+      slowness = 2.3;
+      ts = 60.0 / (1000.0 * slowness);
+      animation_t = 0.0;
+      rotation_center;
+      textureID = 0;
+      box_lid_red.matrix = mat4.create();
+      box_lid_zebra.matrix = mat4.create();
+      box_lid_white.matrix = mat4.create();
+    }
+
     function onRequestSession() {
       console.log("hey")
       var res = navigator.xr.requestSession('immersive-ar',
@@ -184,6 +203,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       return res;
     }
     function onSessionStarted(session) {
+      resetState();
       session.addEventListener('end', (event) => { xrButton.setSession(null); });
       session.addEventListener('select', onSelect);
       if (!gl) {
