@@ -445,7 +445,7 @@ export function translate_(a, v) {
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0
-  ]
+  ];
   let x = v[0], y = v[1], z = v[2];
   let a00, a01, a02, a03;
   let a10, a11, a12, a13;
@@ -767,6 +767,31 @@ export function rotateZ(out, a, rad) {
  * @returns {mat4} out
  */
 export function fromTranslation(out, v) {
+  out[0] = 1;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+  out[4] = 0;
+  out[5] = 1;
+  out[6] = 0;
+  out[7] = 0;
+  out[8] = 0;
+  out[9] = 0;
+  out[10] = 1;
+  out[11] = 0;
+  out[12] = v[0];
+  out[13] = v[1];
+  out[14] = v[2];
+  out[15] = 1;
+  return out;
+}
+export function fromTranslation_(v) {
+  let out = [
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+  ];
   out[0] = 1;
   out[1] = 0;
   out[2] = 0;
