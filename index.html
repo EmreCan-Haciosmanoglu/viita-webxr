@@ -134,9 +134,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.visible = false;
     scene.addNode(box_parent);
 
-    let reticle = new Gltf2Node({ url: 'media/gltf/reticle/reticle.gltf' });
-    reticle.visible = false;
-    scene.addNode(reticle);
+    //let reticle = new Gltf2Node({ url: 'media/gltf/reticle/reticle.gltf' });
+    //reticle.visible = false;
+    //scene.addNode(reticle);
 
 
     // Having a really simple drop shadow underneath an object helps ground
@@ -189,7 +189,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     function onRequestSession() {
-      console.log("hey")
       var res = navigator.xr.requestSession('immersive-ar',
         {
           requiredFeatures: ['local', 'hit-test'],
@@ -199,7 +198,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           xrButton.setSession(session);
           onSessionStarted(session);
         });
-      console.log(res);
       return res;
     }
     function onSessionStarted(session) {
@@ -241,13 +239,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       session.end();
     }
 
+
     var stage = 0;
     let slowness = 2.3;
     let ts = 60.0 / (1000.0 * slowness);
     var animation_t = 0.0;
     var rotation_center;
     var textureID = 0;
+    var event_;
     function onSelect(event) {
+      event_ = event;
       if (stage == 0) {
         if (box_parent.visible) {
           stage = 1;
@@ -282,6 +283,79 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         else if (OnChangeTextureButtonClick()) { }
         else if (OnInfoButtonsClick()) { }
       }
+    }
+
+    function project(min, max, view_projection, transform) {
+      let A = [min[0], min[1], min[2], 1.0];
+      let B = [min[0], max[1], min[2], 1.0];
+      let C = [max[0], max[1], min[2], 1.0];
+      let D = [max[0], min[1], min[2], 1.0];
+      let A_ = [min[0], min[1], max[2], 1.0];
+      let B_ = [min[0], max[1], max[2], 1.0];
+      let C_ = [max[0], max[1], max[2], 1.0];
+      let D_ = [max[0], min[1], max[2], 1.0];
+      A = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), A);
+      B = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), B);
+      C = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), C);
+      D = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), D);
+      A_ = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), A_);
+      B_ = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), B_);
+      C_ = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), C_);
+      D_ = mat4.multiply_with_vector(mat4.multiply_(view_projection, transform), D_);
+      return [A, B, C, D, A_, B_, C_, D_];
+    }
+
+    function new_hit_test(object) {
+      let axes = event_.inputSource.gamepad.axes;
+      axes = [axes[0], -axes[1], 0.0];
+      let ray = new Ray(viewerPose.transform.matrix);
+      let viv_pos = viewerPose.transform.position;
+      viv_pos = [viv_pos.x, viv_pos.y, viv_pos.z];
+      let view = mat4.lookAt_(viv_pos, vec3.add_(viv_pos, ray.direction), [0, 1, 0]);
+      let view_projection = mat4.multiply_(viewerPose.views[0].projectionMatrix, view);
+      let transform = box_parent.matrix;
+      let arr = project(object.min, object.max, view_projection, transform);
+
+      if (CheckPointTriangleCollision([arr[0], arr[1], arr[2]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[0], arr[2], arr[3]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[0], arr[1], arr[5]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[0], arr[5], arr[4]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[0], arr[3], arr[7]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[0], arr[7], arr[4]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[7], arr[4]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[4], arr[5]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[7], arr[3]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[3], arr[2]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[5], arr[1]], axes)) return true;
+      if (CheckPointTriangleCollision([arr[6], arr[1], arr[2]], axes)) return true;
+      return false;
+    }
+
+    function CheckPointTriangleCollision(triangle, point) {
+
+      let AB = vec3.subtract_(triangle[1], triangle[0]);
+      let AC = vec3.subtract_(triangle[2], triangle[0]);
+      let BC = vec3.subtract_(triangle[2], triangle[1]);
+      let BA = vec3.subtract_(triangle[0], triangle[1]);
+      let CA = vec3.subtract_(triangle[0], triangle[2]);
+      let CB = vec3.subtract_(triangle[1], triangle[2]);
+
+      AB[2] = 0.0;
+      AC[2] = 0.0;
+      BC[2] = 0.0;
+      BA[2] = 0.0;
+      CA[2] = 0.0;
+      CB[2] = 0.0;
+      let val1 = vec3.dot(AC, BC) / vec3.dot(AC, AC);
+      let val2 = vec3.dot(CB, AB) / vec3.dot(CB, CB);
+      let u = vec3.subtract_(BC, [AC[0] * val1, AC[1] * val1, 0.0]);
+      let v = vec3.subtract_(AB, [CB[0] * val2, CB[1] * val2, 0.0]);
+
+      let a = vec3.dot(v, vec3.subtract_(point, triangle[0])) / vec3.dot(v, AB);
+      let b = vec3.dot(u, vec3.subtract_(point, triangle[1])) / vec3.dot(u, BC);
+
+      let has_collision_in_xy_plane = a > 0.0 && a < 1.0 && b > 0.0 && b < 1.0 && a + b < 1.0;
+      return has_collision_in_xy_plane;
     }
 
     function OnChangeTextureButtonClick() {
@@ -394,145 +468,63 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     function checkCross() {
-      if (viewerPose) {
-        if (!cross.visible) return false;
-        let min = [
-          cross.min[0] + box_parent.position.x,
-          cross.min[1] + box_parent.position.y,
-          cross.min[2] + box_parent.position.z
-        ];
-        let max = [
-          cross.max[0] + box_parent.position.x,
-          cross.max[1] + box_parent.position.y,
-          cross.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose && cross.visible)
+        return new_hit_test(cross);
+      else
+        return false;
     }
 
     function checkCollisionChangeTextureButton() {
-      if (viewerPose) {
-        let min = [
-          button_to_change_texture.min[0] + box_parent.position.x,
-          button_to_change_texture.min[1] + box_parent.position.y,
-          button_to_change_texture.min[2] + box_parent.position.z
-        ];
-        let max = [
-          button_to_change_texture.max[0] + box_parent.position.x,
-          button_to_change_texture.max[1] + box_parent.position.y,
-          button_to_change_texture.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(button_to_change_texture);
+      else
+        return false;
     }
 
     function checkCollisionOpenLidButton() {
-      if (viewerPose) {
-        let min = [
-          button_to_open_and_close_lid.min[0] + box_parent.position.x,
-          button_to_open_and_close_lid.min[1] + box_parent.position.y,
-          button_to_open_and_close_lid.min[2] + box_parent.position.z
-        ];
-        let max = [
-          button_to_open_and_close_lid.max[0] + box_parent.position.x,
-          button_to_open_and_close_lid.max[1] + box_parent.position.y,
-          button_to_open_and_close_lid.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(button_to_open_and_close_lid);
+      else
+        return false;
     }
 
     function checkCollisionInfoButton1() {
-      if (viewerPose) {
-        let min = [
-          info_button_1.min[0] + box_parent.position.x,
-          info_button_1.min[1] + box_parent.position.y,
-          info_button_1.min[2] + box_parent.position.z
-        ];
-        let max = [
-          info_button_1.max[0] + box_parent.position.x,
-          info_button_1.max[1] + box_parent.position.y,
-          info_button_1.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(info_button_1);
+      else
+        return false;
     }
     function checkCollisionInfoButton2() {
-      if (viewerPose) {
-        let min = [
-          info_button_2.min[0] + box_parent.position.x,
-          info_button_2.min[1] + box_parent.position.y,
-          info_button_2.min[2] + box_parent.position.z
-        ];
-        let max = [
-          info_button_2.max[0] + box_parent.position.x,
-          info_button_2.max[1] + box_parent.position.y,
-          info_button_2.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(info_button_2);
+      else
+        return false;
     }
     function checkCollisionInfoButton3() {
-      if (viewerPose) {
-        let min = [
-          info_button_3.min[0] + box_parent.position.x,
-          info_button_3.min[1] + box_parent.position.y,
-          info_button_3.min[2] + box_parent.position.z
-        ];
-        let max = [
-          info_button_3.max[0] + box_parent.position.x,
-          info_button_3.max[1] + box_parent.position.y,
-          info_button_3.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(info_button_3);
+      else
+        return false;
     }
     function checkCollisionInfoButton4() {
-      if (viewerPose) {
-        let min = [
-          info_button_4.min[0] + box_parent.position.x,
-          info_button_4.min[1] + box_parent.position.y,
-          info_button_4.min[2] + box_parent.position.z
-        ];
-        let max = [
-          info_button_4.max[0] + box_parent.position.x,
-          info_button_4.max[1] + box_parent.position.y,
-          info_button_4.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(info_button_4);
+      else
+        return false;
     }
     function checkCollisionInfoButton5() {
-      if (viewerPose) {
-        let min = [
-          info_button_5.min[0] + box_parent.position.x,
-          info_button_5.min[1] + box_parent.position.y,
-          info_button_5.min[2] + box_parent.position.z
-        ];
-        let max = [
-          info_button_5.max[0] + box_parent.position.x,
-          info_button_5.max[1] + box_parent.position.y,
-          info_button_5.max[2] + box_parent.position.z
-        ];
-        return checkCollision(min, max);
-      }
-      return false;
+      if (viewerPose)
+        return new_hit_test(info_button_5);
+      else
+        return false;
     }
-
+    let test_frame = null;
 
     // Called every time a XRSession requests that a new frame be drawn.
     function onXRFrame(t, frame) {
       let session = frame.session;
       viewerPose = frame.getViewerPose(xrRefSpace);
-      // If we have a hit test source, get its results for the frame
-      // and use the pose to display a reticle in the scene.
+      test_frame = frame;
       if (stage == 0) {
         box_parent.visible = false;
         if (xrHitTestSource && viewerPose) {
@@ -598,6 +590,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }
 
     function move_reticle(xrHitTestSource, viewerPose, frame, xrRefSpace) {
+      return;
       reticle.visible = false;
       if (xrHitTestSource && viewerPose) {
         var xrHitTestResults = frame.getHitTestResults(xrHitTestSource);

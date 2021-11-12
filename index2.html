@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
+    <meta name='mobile-web-app-capable' content='yes'>
+    <link rel='icon' type='image/png' sizes='96x96' href='favicon-96x96.png'>
+
+    <title>novohead</title>
+</head>
+
+<body>
+    <script>
+        function find_devices() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                console.log("enumerateDevices() not supported.");
+                return;
+            }
+
+            // List cameras and microphones.
+
+            navigator.mediaDevices.enumerateDevices()
+                .then(function (devices) {
+                    devices.forEach(function (device) {
+                        console.log(device);
+                    });
+                })
+                .catch(function (err) {
+                    console.log(err.name + ": " + err.message);
+                });
+        }
+        find_devices();
+    </script>
+</body>
+
+</html>

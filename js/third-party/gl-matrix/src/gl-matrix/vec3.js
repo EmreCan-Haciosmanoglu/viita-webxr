@@ -107,6 +107,13 @@ export function add(out, a, b) {
   out[2] = a[2] + b[2];
   return out;
 }
+export function add_(a, b) {
+  let out = [0, 0, 0];
+  out[0] = a[0] + b[0];
+  out[1] = a[1] + b[1];
+  out[2] = a[2] + b[2];
+  return out;
+}
 
 /**
  * Subtracts vector b from vector a
@@ -117,6 +124,13 @@ export function add(out, a, b) {
  * @returns {vec3} out
  */
 export function subtract(out, a, b) {
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  out[2] = a[2] - b[2];
+  return out;
+}
+export function subtract_(a, b) {
+  let out = [0.0, 0.0, 0.0];
   out[0] = a[0] - b[0];
   out[1] = a[1] - b[1];
   out[2] = a[2] - b[2];
@@ -137,6 +151,13 @@ export function multiply(out, a, b) {
   out[2] = a[2] * b[2];
   return out;
 }
+export function multiply_(a, b) {
+  let out = [0.0, 0.0, 0.0];
+  out[0] = a[0] * b[0];
+  out[1] = a[1] * b[1];
+  out[2] = a[2] * b[2];
+  return out;
+}
 
 /**
  * Divides two vec3's
@@ -147,6 +168,13 @@ export function multiply(out, a, b) {
  * @returns {vec3} out
  */
 export function divide(out, a, b) {
+  out[0] = a[0] / b[0];
+  out[1] = a[1] / b[1];
+  out[2] = a[2] / b[2];
+  return out;
+}
+export function divide_(a, b) {
+  let out = [0.0, 0.0, 0.0];
   out[0] = a[0] / b[0];
   out[1] = a[1] / b[1];
   out[2] = a[2] / b[2];
