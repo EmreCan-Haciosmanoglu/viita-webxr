@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     import { DropShadowNode } from './js/render/nodes/drop-shadow.js';
     import { glMatrix, mat4, vec3 } from './js/render/math/gl-matrix.js';
     import { Ray } from './js/render/math/ray.js';
+    import * as math from './js/math.js'
 
     // XR globals.
     let xrButton = null;
@@ -129,6 +130,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     box_parent.addNode(info_4);
     box_parent.addNode(info_5);
     box_parent.addNode(apple);
+
+    info_1.onSelect(()=>{
+      alert("Info 1");
+    });
 
 
     box_parent.visible = false;
