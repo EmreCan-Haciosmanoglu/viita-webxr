@@ -42,6 +42,7 @@ export class Primitive {
     this.indexType = 0;
     this._min = null;
     this._max = null;
+    this.id = -1;
   }
 
   setIndexBuffer(indexBuffer, byteOffset, indexType) {

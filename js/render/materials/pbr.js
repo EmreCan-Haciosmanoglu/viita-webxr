@@ -108,6 +108,8 @@ varying vec2 vTex;
 varying vec4 vCol;
 #endif
 
+uniform int UID;
+
 #ifdef USE_NORMAL_MAP
 uniform sampler2D normalTex;
 varying mat3 vTBN;
@@ -136,6 +138,10 @@ const vec3 dielectricSpec = vec3(0.04);
 const vec3 black = vec3(0.0);
 
 ${EPIC_PBR_FUNCTIONS}
+
+int fragment_id() {
+  return UID;
+}
 
 vec4 fragment_main() {
 #ifdef USE_BASE_COLOR_MAP

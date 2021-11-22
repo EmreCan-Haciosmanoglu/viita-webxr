@@ -71,9 +71,11 @@ void main() {
 `;
 
 const FRAGMENT_SHADER_MULTI_ENTRY = `
+out int id;
 out vec4 color;
 void main() {
   color = fragment_main();
+  id = fragment_id();
 }
 `;
 
@@ -204,6 +206,7 @@ class RenderPrimitive {
   setPrimitive(primitive) {
     this._mode = primitive.mode;
     this._elementCount = primitive.elementCount;
+    this._id = primitive.id;
     this._promise = null;
     this._vao = null;
     this._complete = false;
@@ -772,6 +775,7 @@ export class Renderer {
           }
 
           gl.uniformMatrix4fv(program.uniform.MODEL_MATRIX, false, instance.worldMatrix);
+          gl.uniform1i(program.uniform.UID, )
 
           if (primitive._indexBuffer) {
             gl.drawElements(primitive._mode, primitive._elementCount,
