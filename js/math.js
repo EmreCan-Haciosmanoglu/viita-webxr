@@ -402,4 +402,3 @@ export function lookAt(eye, center, up) {
         1
     ];
 }
-

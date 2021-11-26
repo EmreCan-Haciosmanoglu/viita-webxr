@@ -29,8 +29,7 @@ export class Gltf2Node extends Node {
   constructor(options) {
     super();
     this._url = options.url;
-    this.id = options.id;
-    
+
     this._promise = null;
     this._resolver = null;
     this._rejecter = null;
@@ -50,7 +49,7 @@ export class Gltf2Node extends Node {
 
     this._ensurePromise();
 
-    loader.loadFromUrl(this._url, this.id).then(({ sceneNode, min, max, mesh_name }) => {
+    loader.loadFromUrl(this._url).then(({ sceneNode, min, max, mesh_name }) => {
       this.addNode(sceneNode);
       this._resolver(sceneNode.waitForComplete());
       this._resolver = null;

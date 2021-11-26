@@ -69,7 +69,7 @@ export class Gltf2Loader {
     this._gl = renderer._gl;
   }
 
-  loadFromUrl(url, id) {
+  loadFromUrl(url) {
     return fetch(url)
       .then((response) => {
         let i = url.lastIndexOf('/');
@@ -77,11 +77,11 @@ export class Gltf2Loader {
 
         if (url.endsWith('.gltf')) {
           return response.json().then((json) => {
-            return this.loadFromJson(json, baseUrl, id);
+            return this.loadFromJson(json, baseUrl);
           });
         } else if (url.endsWith('.glb')) {
           return response.arrayBuffer().then((arrayBuffer) => {
-            return this.loadFromBinary(arrayBuffer, baseUrl, id);
+            return this.loadFromBinary(arrayBuffer, baseUrl);
           });
         } else {
           throw new Error('Unrecognized file extension');
@@ -89,7 +89,7 @@ export class Gltf2Loader {
       });
   }
 
-  loadFromBinary(arrayBuffer, baseUrl, id) {
+  loadFromBinary(arrayBuffer, baseUrl) {
     let headerView = new DataView(arrayBuffer, 0, 12);
     let magic = headerView.getUint32(0, true);
     let version = headerView.getUint32(4, true);
@@ -120,10 +120,10 @@ export class Gltf2Loader {
     let decoder = new TextDecoder('utf-8');
     let jsonString = decoder.decode(chunks[CHUNK_TYPE.JSON]);
     let json = JSON.parse(jsonString);
-    return this.loadFromJson(json, baseUrl, chunks[CHUNK_TYPE.BIN], id);
+    return this.loadFromJson(json, baseUrl, chunks[CHUNK_TYPE.BIN]);
   }
 
-  loadFromJson(json, baseUrl, binaryChunk, id) {
+  loadFromJson(json, baseUrl, binaryChunk) {
     if (!json.asset) {
       throw new Error('Missing asset description.');
     }
@@ -269,7 +269,7 @@ export class Gltf2Loader {
         }
 
         let glPrimitive = new Primitive(attributes, elementCount, primitive.mode);
-        glPrimitive.id = id;
+
         if ('indices' in primitive) {
           let accessor = accessors[primitive.indices];
           let bufferView = bufferViews[accessor.bufferView];
